@@ -4,9 +4,9 @@ This code runs a DIY brushless DC motor. It is uploaded into an Arduino nano. Co
 
 The H-Bridges take in 3 inputs each.
 
-*EN pins - There is **1** EN pin per H-Bridge. These control the voltage going through the H-Bridge. 0 being none and 255 meaning the full voltage. Thus they need to be controlled using `analogWrite(enablepin,value)`
+- EN pins - There is **1 EN pin per H-Bridge**. These control the voltage going through the H-Bridge. 0 being none and 255 meaning the full voltage. Thus they need to be controlled using `analogWrite(enablepin,value)`
 
-*IN pins - There are **2** IN pins per H-Bridge. These can be used to control the polarity of the electromagnet by changing the direction of the current. This can be done by using `digitalWrite(inpin,HIGH/LOW)`. For example if you want the current to go one way you can do:
+- IN pins - There are **2 IN pins per H-Bridge**. These can be used to control the polarity of the electromagnet by changing the direction of the current. This can be done by using `digitalWrite(inpin,HIGH/LOW)`. For example if you want the current to go one way you can do:
 ```
 digitalWrite(m1p1,HIGH);
 digitalWrite(m1p2,LOW);
