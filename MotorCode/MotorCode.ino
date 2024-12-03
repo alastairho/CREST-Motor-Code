@@ -8,21 +8,65 @@ byte motorPins[6][3] = {
   {A4, A5, 11} // Coil 6
 };
 byte potentiometer = A7;
+byte button = 0;
 
 byte increment = 10;
-int value = 0;
 int currentDelay = 750;
-int finalDelay = 750;
 
 void setCoil(byte motorIndex, byte voltage, byte polarity) {
   analogWrite(motorPins[motorIndex][2], voltage); // Set ENABLE pin
-  //analogWrite(motorPins[motorIndex + 3][2], voltage);
   if (polarity == 0) {
     digitalWrite(motorPins[motorIndex][0], HIGH); // MOTOR1_IN1, MOTOR2_IN1, MOTOR3_IN1, MOTOR4_IN1, MOTOR5_IN1, MOTOR6_IN1
     digitalWrite(motorPins[motorIndex][1], LOW);
   } else {
     digitalWrite(motorPins[motorIndex][0], LOW);
     digitalWrite(motorPins[motorIndex][1], HIGH);
+  }
+}
+
+void delayUpdate(){
+  int value = analogRead(potentiometer);
+  int finalDelay = map(value, 0, 1023, 20, 150); //Maps the values of potentiometer into finalDelay values
+  Serial.println(currentDelay);
+
+  if (finalDelay > 100) {   //Allows 2 different speed modes, demostrator (slow speed), adjustable (high speed)
+    finalDelay = 750;
+  }
+  else {
+    //Adjust currentDelay towards finalDelay
+    if (currentDelay > finalDelay) {
+      currentDelay = currentDelay - increment;
+    }
+    else if (currentDelay < finalDelay) {
+      currentDelay = currentDelay + increment;
+    }
+    else {
+      currentDelay = finalDelay;
+    }
+  }
+}
+
+void permanent(){
+  for (byte i = 0; i <= 6; i++) {
+    long recordedTime = millis();
+    while (currentDelay >= millis()-recordedTime){
+      setCoil(i, 255, 0); // Activate coil with polarity 0
+      delayUpdate(); //Increments the currentDelay towards finalDelay
+    }
+      setCoil(i, 0, 0);   // Deactivate coil
+      delayUpdate();
+  }
+}
+
+void synchronous(){
+  for (byte i = 0; i <= 6; i++) {
+    long recordedTime = millis();
+    while (currentDelay >= millis()-recordedTime){
+      setCoil(i, 255, 0); // Activate coil with polarity 0
+      delayUpdate(); //Increments the currentDelay towards finalDelay
+    }
+      setCoil(i, 0, 0);   // Deactivate coil
+      delayUpdate();
   }
 }
 
@@ -35,30 +79,16 @@ void setup() {
 
   pinMode(potentiometer, INPUT);
 
-  setCoil(0, 255, 0);
-  delay(5000);
-  Serial.begin(9600);
+  setCoil(0, 255, 0); //Set motor to starting position
+  delay(2500);
+  Serial.begin(9600); //Allows debugging using the serial monitor
 }
 
 void loop() {
-  value = analogRead(potentiometer);
-  finalDelay = map(value, 0, 1023, 20, 1000); //Maps the values of potentiometer into finalDelay values
-  Serial.println(currentDelay);
-
-  for (byte i = 0; i <= 6; i++) {
-    setCoil(i, 255, 0); // Activate coil with polarity 0
-    delay(currentDelay);
-    setCoil(i, 0, 0);   // Deactivate coil
-
-      //Adjust currentDelay towards finalDelay (Set by potentiometer)
-    if (currentDelay > finalDelay) {
-      currentDelay = currentDelay - increment;
-    }
-    else if (currentDelay < finalDelay) {
-      currentDelay = currentDelay + increment;
-    }
-    else {
-      currentDelay = finalDelay;
-    }
+  if (button == LOW){
+    permanent()
+  }
+  else{
+    synchronous()
   }
 }
