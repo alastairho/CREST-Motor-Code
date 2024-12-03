@@ -50,10 +50,12 @@ void permanent(){
   for (byte i = 0; i <= 6; i++) {
     long recordedTime = millis();
     while (currentDelay >= millis()-recordedTime){
-      setCoil(i, 255, 0); // Activate coil with polarity 0
+      setCoil(i, 128, 0); // Activate coil with polarity 0
+      setCoil((i+3)%7, 128, 1);
       delayUpdate(); //Increments the currentDelay towards finalDelay
     }
       setCoil(i, 0, 0);   // Deactivate coil
+      setCoil((i+3)%7, 0, 0);
       delayUpdate();
   }
 }
@@ -62,8 +64,15 @@ void synchronous(){
   for (byte i = 0; i <= 6; i++) {
     long recordedTime = millis();
     while (currentDelay >= millis()-recordedTime){
-      setCoil(i, 255, 0); // Activate coil with polarity 0
-      delayUpdate(); //Increments the currentDelay towards finalDelay
+      if (i % 2 == 0){
+        setCoil(i, 128, 1); // Activate coil with polarity 0
+        setCoil((i+3)%7, 128, 0);
+        delayUpdate(); //Increments the currentDelay towards finalDelay
+      }else{
+        setCoil(i, 128, 0); // Activate coil with polarity 0
+        setCoil((i+3)%7, 128, 1);
+        delayUpdate(); //Increments the currentDelay towards finalDelay
+      }
     }
       setCoil(i, 0, 0);   // Deactivate coil
       delayUpdate();
@@ -86,9 +95,9 @@ void setup() {
 
 void loop() {
   if (button == LOW){
-    permanent()
+    permanent();
   }
   else{
-    synchronous()
+    synchronous();
   }
 }
