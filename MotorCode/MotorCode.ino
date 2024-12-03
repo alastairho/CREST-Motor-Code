@@ -54,9 +54,9 @@ void permanent(){
       setCoil((i+3)%7, 128, 1);
       delayUpdate(); //Increments the currentDelay towards finalDelay
     }
-      setCoil(i, 0, 0);   // Deactivate coil
-      setCoil((i+3)%7, 0, 0);
-      delayUpdate();
+    setCoil(i, 0, 0);   // Deactivate coil
+    setCoil((i+3)%7, 0, 0);
+    delayUpdate();
   }
 }
 
@@ -67,15 +67,14 @@ void synchronous(){
       if (i % 2 == 0){
         setCoil(i, 128, 1); // Activate coil with polarity 0
         setCoil((i+3)%7, 128, 0);
-        delayUpdate(); //Increments the currentDelay towards finalDelay
       }else{
         setCoil(i, 128, 0); // Activate coil with polarity 0
         setCoil((i+3)%7, 128, 1);
-        delayUpdate(); //Increments the currentDelay towards finalDelay
       }
+      delayUpdate(); //Increments the currentDelay towards finalDelay
     }
-      setCoil(i, 0, 0);   // Deactivate coil
-      delayUpdate();
+    setCoil(i, 0, 0);   // Deactivate coil
+    delayUpdate();
   }
 }
 
